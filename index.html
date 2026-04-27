@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Kanmani 💖</title>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI';
+overflow:hidden;
+background:linear-gradient(135deg,#ffd6e0,#ffe6f0);
+color:#ff4d6d;
+}
+
+.page{
+width:100%;
+height:100vh;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+.page.active{display:flex}
+
+/* Sticker */
+.sticker img{
+width:120px;
+animation:floaty 2s infinite;
+transition:.3s;
+}
+.sticker.small img{width:80px;}
+
+@keyframes floaty{
+50%{transform:translateY(-10px);}
+}
+
+/* Cake */
+.cake-container,.cake-box{
+position:relative;
+font-size:70px;
+animation:bounce 1s infinite;
+}
+@keyframes bounce{50%{transform:translateY(-10px);}}
+
+/* Candle */
+.candle{
+position:absolute;
+top:-25px;
+left:50%;
+transform:translateX(-50%);
+}
+
+/* Flame */
+.flame{
+position:absolute;
+top:-12px;
+left:50%;
+width:8px;
+height:12px;
+background:orange;
+border-radius:50%;
+animation:flicker .2s infinite alternate;
+}
+.flame.off{opacity:0;animation:none;}
+
+@keyframes flicker{
+to{transform:translateX(-50%) scale(1.3);}
+}
+
+/* Smoke */
+.smoke{
+position:absolute;
+top:-20px;
+left:50%;
+width:10px;
+height:10px;
+background:gray;
+border-radius:50%;
+animation:smokeUp 1s forwards;
+}
+@keyframes smokeUp{
+to{transform:translateY(-20px) scale(1.5);opacity:0;}
+}
+
+/* Progress */
+.progress{
+width:50%;
+height:6px;
+background:#ffc1d6;
+border-radius:10px;
+}
+.bar{
+height:100%;
+width:0%;
+background:#ff4d6d;
+}
+
+/* Buttons */
+button{
+margin-top:15px;
+padding:10px 20px;
+border:none;
+background:#ff4d6d;
+color:#fff;
+border-radius:20px;
+}
+
+/* Fireworks */
+.fire{
+position:fixed;
+animation:burst 1.5s ease-out forwards;
+}
+@keyframes burst{
+to{transform:translate(var(--x),var(--y)) scale(1.5);opacity:0;}
+}
+
+/* Slice */
+.slice{
+position:absolute;
+font-size:50px;
+animation:sliceOut 1s forwards;
+}
+@keyframes sliceOut{
+to{transform:translate(80px,30px) rotate(15deg);opacity:0;}
+}
+
+/* Floating stickers */
+.float-sticker{
+position:fixed;
+animation:floatSticker linear forwards;
+pointer-events:none;
+}
+@keyframes floatSticker{
+to{transform:translateY(-120vh);opacity:0;}
+}
+
+/* Hearts */
+.heart{
+position:fixed;
+bottom:-20px;
+animation:floatHeart linear forwards;
+pointer-events:none;
+}
+@keyframes floatHeart{
+to{transform:translateY(-120vh) scale(1.5);opacity:0;}
+}
+
+/* Gallery */
+.gallery img{
+width:100px;
+margin:5px;
+border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="music" src="music.mp3" loop></audio>
+<audio id="cheer" src="cheer.mp3"></audio>
+<audio id="cut" src="cut.mp3"></audio>
+
+<!-- LOADING -->
+<div class="page active">
+<div class="cake-container">
+🎂
+<div class="candle">🕯️</div>
+<div id="flame" class="flame"></div>
+</div>
+<p>Preparing your surprise… 💖</p>
+<div class="progress"><div id="bar" class="bar"></div></div>
+</div>
+
+<!-- INTRO -->
+<div class="page">
+<div class="sticker" onclick="gifTap(this)">
+<img src="sticker1.gif">
+</div>
+<h2>a cutiepie was born today… 🎀💖</h2>
+<p>31 years ago! 😚</p>
+<button onclick="nextPage()">Continue</button>
+</div>
+
+<!-- START -->
+<div class="page">
+<div class="sticker small" onclick="gifTap(this)">
+<img src="sticker2.gif">
+</div>
+<h1>Kanmani 💖</h1>
+<button onclick="start()">Start</button>
+</div>
+
+<!-- BDAY -->
+<div class="page">
+<div class="sticker small" onclick="gifTap(this)">
+<img src="sticker3.gif">
+</div>
+
+<h1>Happy Birthday 🎂💖</h1>
+
+<div id="cakeBox" class="cake-box">
+<span id="cakeMain">🎂</span>
+<div class="candle">🕯️</div>
+<div id="flame2" class="flame" style="display:none;"></div>
+</div>
+
+<button id="lightBtn" onclick="light()">Light Candle 🕯️</button>
+<button id="celeBtn" onclick="celebrate()" style="display:none;">Celebrate 🎉</button>
+<button id="cutBtn" onclick="cutCake()" style="display:none;">Cut Cake 🍰</button>
+<button id="memBtn" onclick="nextPage()" style="display:none;">Our Memories 💖</button>
+</div>
+
+<!-- MEMORY -->
+<div class="page">
+<div class="sticker small" onclick="gifTap(this)">
+<img src="sticker4.gif">
+</div>
+
+<div class="gallery">
+<img src="photo1.jpg">
+<img src="photo2.jpg">
+<img src="photo3.jpg">
+<img src="photo4.jpg">
+<img src="photo5.jpg">
+</div>
+<button onclick="nextPage()">Next</button>
+</div>
+
+<!-- FINAL -->
+<div class="page">
+<div class="sticker" onclick="gifTap(this)">
+<img src="sticker5.gif">
+</div>
+<p id="text"></p>
+</div>
+
+<script>
+let pages=document.querySelectorAll(".page");
+let current=0;
+
+/* Loading */
+let p=0;
+let bar=document.getElementById("bar");
+let flame=document.getElementById("flame");
+
+let load=setInterval(()=>{
+p++;
+bar.style.width=p+"%";
+
+if(p>=100){
+clearInterval(load);
+flame.classList.add("off");
+
+let smoke=document.createElement("div");
+smoke.className="smoke";
+document.querySelector(".cake-container").appendChild(smoke);
+
+setTimeout(nextPage,1000);
+}
+},40);
+
+/* Navigation */
+function nextPage(){
+pages[current].classList.remove("active");
+current++;
+pages[current].classList.add("active");
+
+if(current===5) type();
+}
+
+/* Music */
+function start(){
+music.play();
+nextPage();
+}
+
+/* Candle */
+function light(){
+flame2.style.display="block";
+lightBtn.style.display="none";
+celeBtn.style.display="inline-block";
+}
+
+/* Fireworks */
+function createFire(x,y){
+const items=["🎉","✨","💖","🎊"];
+for(let i=0;i<20;i++){
+let f=document.createElement("div");
+f.className="fire";
+f.innerHTML=items[Math.floor(Math.random()*items.length)];
+
+f.style.left=x+"px";
+f.style.top=y+"px";
+
+let angle=Math.random()*2*Math.PI;
+let dist=Math.random()*150+50;
+
+f.style.setProperty("--x",Math.cos(angle)*dist+"px");
+f.style.setProperty("--y",Math.sin(angle)*dist+"px");
+
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),1500);
+}
+}
+
+function celebrate(){
+cheer.play();
+celeBtn.style.display="none";
+cutBtn.style.display="inline-block";
+
+let t=setInterval(()=>{
+createFire(Math.random()*innerWidth,Math.random()*innerHeight);
+},300);
+
+setTimeout(()=>clearInterval(t),4000);
+}
+
+/* Cut cake */
+function cutCake(){
+cut.play();
+cakeMain.innerHTML="🍰";
+
+let s=document.createElement("div");
+s.className="slice";
+s.innerHTML="🍰";
+cakeBox.appendChild(s);
+
+cutBtn.style.display="none";
+memBtn.style.display="inline-block";
+}
+
+/* GIF tap */
+function gifTap(el){
+el.style.transform="scale(1.2)";
+setTimeout(()=>el.style.transform="",300);
+
+for(let i=0;i<5;i++){
+let s=document.createElement("img");
+s.src="sticker1.gif";
+s.className="float-sticker";
+
+s.style.left=Math.random()*100+"vw";
+s.style.bottom="0";
+s.style.width="50px";
+s.style.animationDuration=(Math.random()*3+3)+"s";
+
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),6000);
+}
+}
+
+/* Floating stickers */
+setInterval(()=>{
+let s=document.createElement("img");
+s.src="sticker2.gif";
+s.className="float-sticker";
+
+s.style.left=Math.random()*100+"vw";
+s.style.bottom="-20px";
+s.style.width="60px";
+s.style.animationDuration=(Math.random()*4+4)+"s";
+
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),7000);
+},800);
+
+/* Floating hearts */
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="💖";
+
+h.style.left=Math.random()*100+"vw";
+h.style.fontSize=(Math.random()*20+15)+"px";
+h.style.animationDuration=(Math.random()*3+3)+"s";
+
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),6000);
+},300);
+
+/* Typing */
+let msg=`Maybe we can’t be together…
+
+but what I feel for you is real.
+
+Happy Birthday, Kanmani 💖`;
+let i=0;
+
+function type(){
+let el=document.getElementById("text");
+function t(){
+if(i<msg.length){
+el.innerHTML+=msg[i];
+i++;
+setTimeout(t,40);
+}
+}
+t();
+}
+</script>
+
+</body>
+</html>
